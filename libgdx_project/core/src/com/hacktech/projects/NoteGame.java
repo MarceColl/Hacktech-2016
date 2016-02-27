@@ -13,10 +13,17 @@ import com.badlogic.gdx.utils.TimeUtils;
 public class NoteGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture staffBg;
-	Texture quarter;
+	Texture quarterNote;
+	Texture eighth_note;
 	Texture line_blue;
 	Texture line_black;
+	Texture bar;
+	Texture ball;
+	Texture stick;
+	Texture eighth_tail;
+	
 	private final double BPM = 60;
+
 	MusicFileProcessor mfp;
 	
 	long startTime = TimeUtils.millis();
@@ -27,9 +34,16 @@ public class NoteGame extends ApplicationAdapter {
 		mfp = new MusicFileProcessor();
 		batch = new SpriteBatch();
 		staffBg = new Texture("staffbg.png");
-		quarter = new Texture("quarter.png");
+		quarterNote = new Texture("quarterNote.png");
 		line_blue = new Texture("line_blue.png");
 		line_black = new Texture("line_black.png");
+		eighth_note = new Texture ("eighth_note.png");
+		stick = new Texture ("stick.png");
+		ball = new Texture ("ball.png");
+		bar = new Texture ("bar.png");
+		eighth_tail = new Texture ("eighth_tail.png");
+		
+
 		
 		Array<Beat> beatSheet = new Array<Beat>();
 		
@@ -48,7 +62,23 @@ public class NoteGame extends ApplicationAdapter {
 		
 		songHash = mfp.makeListIntoHashTable(beatSheet);
 	}
-
+	private void drawNote(Beat b, double x, SpriteBatch batch)
+	{
+		if (b.type >= 1){
+			batch.draw(ball, (float)x, 84, 25, 15);
+			batch.draw(stick, (float)x + 22, 100, 3, 47);
+			
+		}
+		if (b.type >= 2){
+			batch.draw(eighth_tail, (float)x + 22, 90, 25, 1.5f*40.0f);
+		}
+		if (b.type == 0){
+			batch.draw(line_black, (float)x + 20, 82,3,70);
+		}
+		else if (b.type == -1){
+			batch.draw(quarter_rest, (float)x, 85, 35, 1.7f*35.0f);
+		}
+	}
 	@Override
 	public void render () {
 		long timeElapsed = TimeUtils.millis() - startTime;
@@ -59,11 +89,13 @@ public class NoteGame extends ApplicationAdapter {
 		System.out.println(timeElapsed);
 		
 		batch.begin();
-		
+	
+
 		/*
 		 * DRAW THE STAFF / ANY BACKGROUND
 		 */
 		batch.draw(staffBg, 0, 60, 500, 100);
+	
 		
 		/*
 		 * RENDER THE BEATS
@@ -90,7 +122,9 @@ public class NoteGame extends ApplicationAdapter {
 						batch.draw(line_black, (float)x + 20, 82,3,70);
 					}
 					else if(b.type == 1){
-						batch.draw(quarter, (float)x, 75, 40, 1.9f*40.0f);
+						batch.draw(ball, (float)x, 84, 25, 15);
+						batch.draw(stick, (float)x + 22, 100, 3, 47);
+						batch.draw(eighth_tail, (float)x + 22, 90, 25, 1.5f*40.0f);
 					}
 					
 					
