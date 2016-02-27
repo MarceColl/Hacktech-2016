@@ -41,6 +41,7 @@ public class MusicFileProcessor {
 				//Check if beatTime falls midway through the measure
 				 if((b.beatTime%finalBeat)%2 == 0){
 					 prev.barsToNext = true;
+					 b.barredByPrev = true;
 				 }
 			}
 			
