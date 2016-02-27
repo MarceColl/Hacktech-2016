@@ -28,13 +28,25 @@ public class MusicFileProcessor {
 			
 			prevBeat = b;
 			
-			
-			
 			if(Math.abs(beatSum - finalBeat) < 0.001){
 				measureLines.add(new Beat(b.beatTime - delta/2.0,0));
 				beatSum = 0;
 			}
 		}
+		
+		Beat prev = new Beat(0.0,0);
+		for(int i = 0; i < blist.size; i++){
+			Beat b = blist.get(i);
+			if(b.barsToNext && prev.barredByPrev){
+				//Check if beatTime falls midway through the measure
+				 if((b.beatTime%finalBeat)%2 == 0){
+					 prev.barsToNext = true;
+				 }
+			}
+			
+			prev = b;
+		}
+		
 		blist.addAll(measureLines);
 		
 	}
