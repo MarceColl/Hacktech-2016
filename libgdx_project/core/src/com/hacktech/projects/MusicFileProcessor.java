@@ -12,14 +12,23 @@ public class MusicFileProcessor {
 	
 	public void addMeasureLines(Array<Beat> blist){
 		double beatSum = 0;
-		double prevBeat = 1;
+		Beat prevBeat = new Beat(1.0,0);
 		double finalBeat = 4;
 		
 		Array<Beat> measureLines = new Array<Beat>();
-		for(Beat b : blist){
-			double delta = (b.beatTime - prevBeat);
+		for(int i = 0; i < blist.size; i++){
+			Beat b = blist.get(i);
+			double delta = (b.beatTime - prevBeat.beatTime);
 			beatSum += delta;
-			prevBeat = b.beatTime;
+			
+			if(delta == 0.5 && (int)Math.floor(prevBeat.beatTime) == (int)Math.ceil(prevBeat.beatTime)){
+				prevBeat.barsToNext = true;
+				b.barredByPrev = true;
+			}
+			
+			prevBeat = b;
+			
+			
 			
 			if(Math.abs(beatSum - finalBeat) < 0.001){
 				measureLines.add(new Beat(b.beatTime - delta/2.0,0));
