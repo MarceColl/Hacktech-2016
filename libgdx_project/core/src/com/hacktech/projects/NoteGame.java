@@ -81,15 +81,11 @@ public class NoteGame extends ApplicationAdapter {
 		}
 		if (b.type >= 2)
 		{
-			if (b.barsToNext == true)
+			if (b.barredByPrev)
 			{
-				batch.draw(line_black, (float)x + 23, 137, 50, 10);
+				batch.draw(line_black, (float)x + 23, 137, -50, 10);
 			}
-			else if (b.barredByPrev == true)
-			{
-				//nothing
-			}
-			else if (!b.barredByPrev)
+			else if (!b.barsToNext)
 			{
 			batch.draw(eighth_tail, (float)x + 22, 90, 25, 1.5f*40.0f);
 			}
