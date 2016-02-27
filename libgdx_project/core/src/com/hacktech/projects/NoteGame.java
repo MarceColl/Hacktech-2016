@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
@@ -13,6 +14,9 @@ import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class NoteGame extends ApplicationAdapter {
+	private boolean startScreen = true;
+	
+	
 	ShaderProgram colorShader;
 	SpriteBatch batch;
 	Texture staffBg;
@@ -28,11 +32,12 @@ public class NoteGame extends ApplicationAdapter {
 	private final double BPM = 120;
 	MusicFileProcessor mfp;
 	
-	long startTime = TimeUtils.millis();
+	long startTime;
 	Queue<BeatTouch> beatInput = new Queue<BeatTouch>();
 	IntMap<Array<Beat>> songHash = new IntMap<Array<Beat>>(); 
 	@Override
 	public void create () {
+		
 		colorShader = new ShaderProgram(Gdx.files.internal("color.vert"),Gdx.files.internal("color.frag"));
 		
 		if (!colorShader.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + colorShader.getLog());
@@ -72,6 +77,12 @@ public class NoteGame extends ApplicationAdapter {
 		
 		songHash = mfp.makeListIntoHashTable(beatSheet);
 	}
+	
+	private void begin(){
+		startScreen = false;
+		startTime = TimeUtils.millis();
+	}
+	
 	private void drawNote(Beat b, double x, SpriteBatch batch)
 	{
 		if (b.type >= 1){
@@ -91,61 +102,85 @@ public class NoteGame extends ApplicationAdapter {
 	}
 	@Override
 	public void render () {
-		long timeElapsed = TimeUtils.millis() - startTime;
-		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		System.out.println(timeElapsed);
-		
-		batch.begin();
-	
-
-		/*
-		 * DRAW THE STAFF / ANY BACKGROUND
-		 */
-		batch.draw(staffBg, 0, 60, 500, 100);
-	
-		
-		/*
-		 * RENDER THE BEATS
-		 */
-		
-		double min = (double)timeElapsed / (60.0*1000.0);
-		double beatsElapsed = BPM*min;
-		
-		Array<Beat> beatWindow = songHash.get((int)Math.floor(beatsElapsed/5.0));
-		if(beatWindow != null){
-			if((int)Math.ceil(beatsElapsed/5.0) != (int)Math.floor(beatsElapsed/5.0)){
-				Array<Beat> b2 = songHash.get((int)Math.ceil(beatsElapsed/5.0));
-				if(b2 != null){
-					beatWindow.addAll(b2);
-				}
-			}
+		if(startScreen){
+			Gdx.gl.glClearColor(0, 0, 0, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			
-			double bWindow = 4;
-			double bEnd = beatsElapsed+bWindow;
-			for(Beat b : beatWindow){
-				if(b.beatTime > beatsElapsed - 0.25 && b.beatTime < bEnd){
-					if(Math.abs(beatsElapsed - b.beatTime) < 0.1 && b.type > 0){
-						b.status = 1;
-					}
-					
-					double x = 50.0 + (400.0*(b.beatTime - beatsElapsed) / bWindow);
-					drawNote(b, x, batch);
-					
-					
-				}
+			batch.begin();
+			BitmapFont font =  new BitmapFont();
+			
+			CharSequence str = "Click Anywhere To Begin";
+			
+			font.draw(batch,str,Gdx.graphics.getWidth()/2.0f,Gdx.graphics.getHeight()/2.0f);
+			batch.end();
+			
+			if(Gdx.input.justTouched()){
+				begin();
 			}
 		}
-
-		/*
-		 * Render beat line
-		 */
-		batch.draw(line_blue, 68,82,3,70);
+		else{
+			
 		
 		
-		batch.end();
+			long timeElapsed = TimeUtils.millis() - startTime;
+			
+			
+			
+			System.out.println(timeElapsed);
+			
+			batch.begin();
+		
+		
+			/*
+			 * DRAW THE STAFF / ANY BACKGROUND
+			 */
+			batch.draw(staffBg, 0, 60, 500, 100);
+		
+			
+			/*
+			 * RENDER THE BEATS
+			 */
+			
+			double min = (double)timeElapsed / (60.0*1000.0);
+			double beatsElapsed = BPM*min;
+			
+			Array<Beat> beatWindow = songHash.get((int)Math.floor(beatsElapsed/5.0));
+			if(beatWindow != null){
+				if((int)Math.ceil(beatsElapsed/5.0) != (int)Math.floor(beatsElapsed/5.0)){
+					Array<Beat> b2 = songHash.get((int)Math.ceil(beatsElapsed/5.0));
+					if(b2 != null){
+						beatWindow.addAll(b2);
+					}
+				}
+				
+				double bWindow = 4;
+				double bEnd = beatsElapsed+bWindow;
+				for(Beat b : beatWindow){
+					if(b.beatTime > beatsElapsed - 0.25 && b.beatTime < bEnd){
+						if(Math.abs(beatsElapsed - b.beatTime) < 0.1 && b.type > 0){
+							b.status = 1;
+						}
+						
+						double x = 50.0 + (400.0*(b.beatTime - beatsElapsed) / bWindow);
+						drawNote(b, x, batch);
+						
+						
+					}
+				}
+			}
+		
+			/*
+			 * Render beat line
+			 */
+			batch.draw(line_blue, 68,82,3,70);
+			
+			
+			batch.end();
+		
+		}
 	}
 }
 
