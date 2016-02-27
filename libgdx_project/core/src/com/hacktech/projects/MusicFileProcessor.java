@@ -12,9 +12,7 @@ public class MusicFileProcessor {
 	
 	public void addMeasureLines(Array<Beat> blist){
 		double beatSum = 0;
-		
 		double prevBeat = 1;
-		
 		double finalBeat = 4;
 		
 		Array<Beat> measureLines = new Array<Beat>();
