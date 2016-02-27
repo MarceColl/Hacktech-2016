@@ -63,9 +63,10 @@ public class NoteGame extends ApplicationAdapter {
 		beatSheet.add(new Beat(9,1));
 		beatSheet.add(new Beat(10,2));
 		beatSheet.add(new Beat(10.5,2));
-		beatSheet.add(new Beat(11,1));
-		beatSheet.add(new Beat(12,1));
-		beatSheet.add(new Beat(13,1));
+		beatSheet.add(new Beat(11, 2));
+		beatSheet.add(new Beat(11.5, 2));
+		beatSheet.add(new Beat(12, 2));
+		beatSheet.add(new Beat(12.5, 2));
 		
 		mfp.addMeasureLines(beatSheet);
 		
@@ -78,8 +79,20 @@ public class NoteGame extends ApplicationAdapter {
 			batch.draw(stick, (float)x + 22, 100, 3, 47);
 			
 		}
-		if (b.type >= 2){
+		if (b.type >= 2)
+		{
+			if (b.barsToNext == true)
+			{
+				batch.draw(line_black, (float)x + 23, 137, 50, 10);
+			}
+			else if (b.barredByPrev == true)
+			{
+				//nothing
+			}
+			else if (!b.barredByPrev)
+			{
 			batch.draw(eighth_tail, (float)x + 22, 90, 25, 1.5f*40.0f);
+			}
 		}
 		if (b.type == 0){
 			batch.draw(line_black, (float)x + 20, 82,3,70);
