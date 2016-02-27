@@ -14,8 +14,9 @@ public class NoteGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture staffBg;
 	Texture quarter;
-	Texture line;
-	private final double BPM = 120;
+	Texture line_blue;
+	Texture line_black;
+	private final double BPM = 60;
 	MusicFileProcessor mfp;
 	
 	long startTime = TimeUtils.millis();
@@ -27,16 +28,25 @@ public class NoteGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		staffBg = new Texture("staffbg.png");
 		quarter = new Texture("quarter.png");
-		line = new Texture("line.png");
+		line_blue = new Texture("line_blue.png");
+		line_black = new Texture("line_black.png");
 		
 		Array<Beat> beatSheet = new Array<Beat>();
 		
+		beatSheet.add(new Beat(1,1));
+		beatSheet.add(new Beat(2,1));
+		beatSheet.add(new Beat(3,1));
 		beatSheet.add(new Beat(4,1));
+		beatSheet.add(new Beat(4.5,1));
 		beatSheet.add(new Beat(5,1));
-		beatSheet.add(new Beat(10,1));
+		beatSheet.add(new Beat(6,1));
+		beatSheet.add(new Beat(7,1));
+		beatSheet.add(new Beat(8,1));
+		beatSheet.add(new Beat(9,1));
+		
+		mfp.addMeasureLines(beatSheet);
 		
 		songHash = mfp.makeListIntoHashTable(beatSheet);
-		System.out.println("");
 	}
 
 	@Override
@@ -76,7 +86,14 @@ public class NoteGame extends ApplicationAdapter {
 			for(Beat b : beatWindow){
 				if(b.beatTime > beatsElapsed && b.beatTime < bEnd){
 					double x = 50.0 + (400.0*(b.beatTime - beatsElapsed) / bWindow);
-					batch.draw(quarter, (float)x, 75, 40, 1.9f*40.0f);
+					if(b.type == 0){
+						batch.draw(line_black, (float)x + 20, 82,3,70);
+					}
+					else if(b.type == 1){
+						batch.draw(quarter, (float)x, 75, 40, 1.9f*40.0f);
+					}
+					
+					
 				}
 			}
 		}
@@ -84,7 +101,7 @@ public class NoteGame extends ApplicationAdapter {
 		/*
 		 * Render beat line
 		 */
-		batch.draw(line, 68,82,3,70);
+		batch.draw(line_blue, 68,82,3,70);
 		
 		
 		batch.end();
