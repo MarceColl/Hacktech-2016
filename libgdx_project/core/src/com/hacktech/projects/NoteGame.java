@@ -346,13 +346,18 @@ public class NoteGame extends ApplicationAdapter {
 				}
 				
 				for(BeatTouch b : beatInput){
-					double beatTime = BPM*(b.timeStamp / 60.0);
+					double beatTime = b.timeStamp;
 					x = (r*(beatTime - scrollX)/bWindow);
+					
+					//TODO: Check each beat input to see if it matches against a note in the hash table
+					//If so, show it in GREEN :)
 					
 					batch.setShader(colorShader);
 					colorShader.setUniform3fv("tint", new float[]{1.0f,0.0f,0.0f}, 0, 3);
-					drawNoteFinal(new Beat(beatTime,2),x,batch,(int)r/8);
+					drawNoteFinal(new Beat(beatTime,2,b.pitch),x,batch,(int)r/8);
 					batch.setShader(null);
+					
+					
 				}
 					
 				if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
@@ -378,6 +383,7 @@ public class NoteGame extends ApplicationAdapter {
 class BeatTouch{
 	double timeStamp;
 	long identity;
+	int pitch = 0;
 	public BeatTouch(double ts, long id){
 		this.timeStamp = ts;
 		this.identity = id;
