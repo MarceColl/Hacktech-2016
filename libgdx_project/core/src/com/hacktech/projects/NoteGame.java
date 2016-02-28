@@ -433,6 +433,10 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 	public double getTimeOffset() {
 		return startTime/1000 - clickTime/1000;
 	}
+
+    public boolean hasStarted() {
+        return !startScreen;
+    }
 }
 
 class BeatTouch{
