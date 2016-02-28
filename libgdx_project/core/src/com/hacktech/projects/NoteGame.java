@@ -39,7 +39,7 @@ public class NoteGame extends ApplicationAdapter {
 	Texture eighth_rest;
 	Texture whole_rest;
 	Texture dot;
-	private final double BPM = 120;
+	private final double BPM = 200;
 	MusicFileProcessor mfp;
 	
 	boolean finished = false;
@@ -75,16 +75,20 @@ public class NoteGame extends ApplicationAdapter {
 		
 		beatSheet = new Array<Beat>();
 
-		beatSheet.add(new Beat(1,3,true));
+		beatSheet.add(new Beat(3,-1,true));
 		beatSheet.add(new Beat(4,-1));
-		beatSheet.add(new Beat(5,1));
-		beatSheet.add(new Beat(6, 1));
-		beatSheet.add(new Beat(7,2,0));
-		beatSheet.add(new Beat(7.5,2,1));
-		beatSheet.add(new Beat(8,2,2));
-		beatSheet.add(new Beat(8.5,-2,0));
-		beatSheet.add(new Beat(9,-2,2));
-		beatSheet.add(new Beat(9.5,2,1));
+		beatSheet.add(new Beat(5,-1,true));
+		beatSheet.add(new Beat(6,-1,true));
+		beatSheet.add(new Beat(7,-1,true));
+		beatSheet.add(new Beat(8,-1));
+		beatSheet.add(new Beat(9,1));
+		beatSheet.add(new Beat(10, 1));
+		beatSheet.add(new Beat(11,2,0));
+		beatSheet.add(new Beat(11.5,2,1));
+		beatSheet.add(new Beat(12,2,2));
+		beatSheet.add(new Beat(12.5,-2,0));
+		beatSheet.add(new Beat(13,-2,2));
+		beatSheet.add(new Beat(13.5,2,1));
 		
 		mfp.addMeasureLines(beatSheet);
 		
@@ -348,10 +352,6 @@ public class NoteGame extends ApplicationAdapter {
 				for(BeatTouch b : beatInput){
 					double beatTime = b.timeStamp;
 					
-					
-					//TODO: Check each beat input to see if it matches against a note in the hash table
-					//If so, show it in GREEN :)
-					
 					int b1 = (int)Math.floor(beatTime / 5.0);
 					int b2 = (int)Math.ceil(beatTime / 5.0);
 					
@@ -370,7 +370,7 @@ public class NoteGame extends ApplicationAdapter {
 					for(int i = 0; i < bu1.size; i++){
 						Beat testBeat = bu1.get(i);
 						if(testBeat.pitchNumber == b.pitch && !testBeat.matched && testBeat.type > 0){
-							if(Math.abs(testBeat.beatTime - b.timeStamp) < 0.3){
+							if(Math.abs(testBeat.beatTime - b.timeStamp) < 0.3*(BPM/120.0)){
 								matches = true;
 								matchingBeat = testBeat;
 								testBeat.matched = true;
