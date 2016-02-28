@@ -38,6 +38,7 @@ public class NoteGame extends ApplicationAdapter {
 	private final double BPM = 120;
 	MusicFileProcessor mfp;
 	
+	boolean finished = false;
 	long startTime;
 	Queue<BeatTouch> beatInput = new Queue<BeatTouch>();
 	IntMap<Array<Beat>> songHash = new IntMap<Array<Beat>>(); 
@@ -160,7 +161,7 @@ public class NoteGame extends ApplicationAdapter {
 				begin();
 			}
 		}
-		else{
+		else {
 			long timeElapsed = TimeUtils.millis() - startTime;
 			
 			double min = (double)timeElapsed / (60.0*1000.0);
@@ -182,11 +183,11 @@ public class NoteGame extends ApplicationAdapter {
 			batch.draw(staffBg, 0, 60, 500, 100);
 		
 			
+			if(!finished){
+			
 			/*
 			 * RENDER THE BEATS
 			 */
-			
-			
 			Array<Beat> beatWindow = songHash.get((int)Math.floor(beatsElapsed/5.0));
 			if(beatWindow != null){
 				if((int)Math.ceil(beatsElapsed/5.0) != (int)Math.floor(beatsElapsed/5.0)){
@@ -200,24 +201,27 @@ public class NoteGame extends ApplicationAdapter {
 				double bEnd = beatsElapsed+bWindow;
 				for(Beat b : beatWindow){
 					if(b.beatTime > beatsElapsed - 0.25 && b.beatTime < bEnd){
-						if(Math.abs(beatsElapsed - b.beatTime) < 0.1 && b.type > 0){
+						if(Math.abs(beatsElapsed - b.beatTime) < 0.1){
 							b.status = 1;
 						}
 						
 						double x = 50.0 + (400.0*(b.beatTime - beatsElapsed) / bWindow);
 						drawNote(b, x, batch);
 						
-						
+						if(b.type == -5 && b.status == 1){
+							finished = true;
+						}
 					}
 				}
 			}
 		
-
-		/*
-		 * Render beat line
-		 */
-		batch.draw(line_blue, 86,82,3,70);
-		batch.draw(line_blue, 65,82,3,70);
+			}
+			
+			/*
+			 * Render beat line
+			 */
+			batch.draw(line_blue, 86,82,3,70);
+			batch.draw(line_blue, 65,82,3,70);
 
 		
 			
