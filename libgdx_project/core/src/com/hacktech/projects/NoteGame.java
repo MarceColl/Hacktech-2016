@@ -38,7 +38,7 @@ public class NoteGame extends ApplicationAdapter {
 	Texture eighth_rest;
 	Texture whole_rest;
 	Texture dot;
-	private final double BPM = 200;
+	private final double BPM = 120;
 	MusicFileProcessor mfp;
 	
 	boolean finished = false;
@@ -73,15 +73,16 @@ public class NoteGame extends ApplicationAdapter {
 		dot = new Texture ("dot.png");
 		
 		beatSheet = new Array<Beat>();
-		beatSheet.add(new Beat(1,1));
-		beatSheet.add(new Beat(2,1));
-		beatSheet.add(new Beat(3,-1));
+		beatSheet.add(new Beat(1,3,true));
 		beatSheet.add(new Beat(4,-1));
 		beatSheet.add(new Beat(5,1));
 		beatSheet.add(new Beat(6, 1));
-		beatSheet.add(new Beat(7,1));
-		beatSheet.add(new Beat(8, 1));
-		beatSheet.add(new Beat(9, 4));
+		beatSheet.add(new Beat(7,2,0));
+		beatSheet.add(new Beat(7.5,2,1));
+		beatSheet.add(new Beat(8,2,2));
+		beatSheet.add(new Beat(8.5,-2,0));
+		beatSheet.add(new Beat(9,-2,2));
+		beatSheet.add(new Beat(9.5,2,1));
 		
 		mfp.addMeasureLines(beatSheet);
 		
@@ -151,38 +152,51 @@ public class NoteGame extends ApplicationAdapter {
 	}
 	private void drawNote(Beat b, double x, SpriteBatch batch)
 	{
+		int ballY = 84 + 8*b.pitchNumber;
+		int stickY = ballY + (99 - 84);
+		int halfStick = ballY + (95 - 84);
+		int dotY = ballY + (77 - 84);
+		int halfDot = ballY + (75 - 74);
+		int barY = ballY + (137 - 84);
+		int tailY = ballY + (90 - 84);
+		
 		if (b.type == 1){
-			batch.draw(stick, (float)x + 22, 100, 3, 47);
-			batch.draw(ball, (float)x, 84, 25, 15);
+			batch.draw(stick, (float)x + 22, stickY, 3, 47);
+			batch.draw(ball, (float)x, ballY, 25, 15);
 			if (b.dotted)
 			{
-				batch.draw(dot, (float)x + 30, 77, 20, 20);
+				batch.draw(dot, (float)x + 30, dotY, 20, 20);
 			}
 		}
 		if (b.type == 2)
 		{
-			batch.draw(stick, (float)x + 22, 100, 3, 47);
-			batch.draw(ball, (float)x, 84, 25, 15);
+			batch.draw(stick, (float)x + 22, stickY, 3, 47);
+			batch.draw(ball, (float)x, ballY, 25, 15);
+			int dif = b.barNote - b.pitchNumber;
 			if (b.barredByPrev)
 			{
-				batch.draw(line_black, (float)x + 23, 137, -50, 10);
+				batch.draw(stick, (float)x + 22, stickY, 3, 47+8*dif);
+				batch.draw(line_black, (float)x + 23, barY+8*dif, -50, 10);
 			}
 			else if (!b.barsToNext)
 			{
-			batch.draw(eighth_tail, (float)x + 22, 90, 25, 1.5f*40.0f);
+			batch.draw(eighth_tail, (float)x + 22, tailY, 25, 1.5f*40.0f);
+			}
+			else{
+				batch.draw(stick, (float)x + 22, stickY, 3, 47+8*dif);
 			}
 		}
 		if (b.type == 3)
 		{
-			batch.draw(stick, (float)x + 20, 95, 3, 52);
-			batch.draw(half, (float)x, 84, 25, 15);	
+			batch.draw(stick, (float)x + 20, halfStick, 3, 52);
+			batch.draw(half, (float)x, ballY, 25, 15);	
 			if (b.dotted == true){
-				batch.draw(dot, (float)x + 30, 75,20, 20);
+				batch.draw(dot, (float)x + 30, halfDot,20, 20);
 			}
 		}
 		if (b.type == 4)
 		{
-			batch.draw(whole, (float)x, 84, 25, 15);
+			batch.draw(whole, (float)x, ballY, 25, 15);
 		}
 		if (b.type == 0){
 			batch.draw(line_black, (float)x + 20, 82,3,70);
