@@ -73,6 +73,7 @@ public class NoteGame extends ApplicationAdapter {
 		beatSheet.add(new Beat(5,1));
 		beatSheet.add(new Beat(6,3, true));
 		beatSheet.add(new Beat(9,4));
+		beatSheet.add(new Beat(13,-5));
 		
 		mfp.addMeasureLines(beatSheet);
 		
@@ -133,6 +134,10 @@ public class NoteGame extends ApplicationAdapter {
 		}
 		if (b.type == -4){
 			batch.draw(whole_rest, (float)x-20, 94, 50, 35);
+		}
+		if (b.type == -5)
+		{
+			batch.draw(line_black, (float)x-20, 82,12,70);
 		}
 	}
 	@Override
@@ -207,7 +212,7 @@ public class NoteGame extends ApplicationAdapter {
 					}
 				}
 			}
-		}
+		
 
 		/*
 		 * Render beat line
@@ -215,10 +220,10 @@ public class NoteGame extends ApplicationAdapter {
 		batch.draw(line_blue, 86,82,3,70);
 		batch.draw(line_blue, 65,82,3,70);
 
-			
+		
 			
 			batch.end();
-		
+		}
 		}
 	}
 
