@@ -39,6 +39,7 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 	Texture eighth_rest;
 	Texture whole_rest;
 	Texture dot;
+	Texture tutorial;
 	private final double BPM = 120;
 	MusicFileProcessor mfp;
 
@@ -77,6 +78,7 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 		eighth_rest = new Texture ("eighth_rest.png");
 		whole_rest = new Texture ("whole_rest.png");
 		dot = new Texture ("dot.png");
+		tutorial = new Texture ("noteTutorial.png");
 
 
 		beatSheet = new Array<Beat>();
@@ -297,11 +299,12 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 			batch.begin();
-			BitmapFont font =  new BitmapFont();
-
-			CharSequence str = "Click Anywhere To Begin";
-
-			font.draw(batch,str,Gdx.graphics.getWidth()/2.0f,Gdx.graphics.getHeight()/2.0f);
+//			BitmapFont font =  new BitmapFont();
+//			CharSequence str = "Click Anywhere To Begin";
+//			font.draw(batch,str,Gdx.graphics.getWidth()/2.0f,Gdx.graphics.getHeight()/2.0f);
+			
+			batch.draw(tutorial,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+			
 			batch.end();
 
 			if(Gdx.input.justTouched()){
