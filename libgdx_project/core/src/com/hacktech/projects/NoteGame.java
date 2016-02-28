@@ -39,8 +39,11 @@ public class NoteGame extends ApplicationAdapter {
 	Texture eighth_rest;
 	Texture whole_rest;
 	Texture dot;
-	private final double BPM = 200;
+	private final double BPM = 120;
 	MusicFileProcessor mfp;
+	
+	Array<Beat> correct = new Array<Beat>();
+	Array<Beat> incorrect = new Array<Beat>();
 	
 	boolean finished = false;
 	long startTime;
@@ -81,14 +84,20 @@ public class NoteGame extends ApplicationAdapter {
 		beatSheet.add(new Beat(6,-1,true));
 		beatSheet.add(new Beat(7,-1,true));
 		beatSheet.add(new Beat(8,-1));
-		beatSheet.add(new Beat(9,1));
-		beatSheet.add(new Beat(10, 1));
-		beatSheet.add(new Beat(11,2,0));
-		beatSheet.add(new Beat(11.5,2,1));
-		beatSheet.add(new Beat(12,2,2));
-		beatSheet.add(new Beat(12.5,-2,0));
-		beatSheet.add(new Beat(13,-2,2));
+		beatSheet.add(new Beat(9,-2));
+		beatSheet.add(new Beat(9.5, 2));
+		beatSheet.add(new Beat(10,-2));
+		beatSheet.add(new Beat(10.5,2,1));
+		beatSheet.add(new Beat(11,2,2));
+		beatSheet.add(new Beat(11.5,-2));
+		beatSheet.add(new Beat(12,1,1));
+		beatSheet.add(new Beat(13,2,1));
 		beatSheet.add(new Beat(13.5,2,1));
+		beatSheet.add(new Beat(14,1,true));
+		beatSheet.add(new Beat(15.5,2,true));
+		beatSheet.add(new Beat(16,2,true));
+		beatSheet.add(new Beat(16.5,2,true));
+		beatSheet.add(new Beat(17,1,true));
 		
 		mfp.addMeasureLines(beatSheet);
 		
@@ -99,6 +108,55 @@ public class NoteGame extends ApplicationAdapter {
 		startScreen = false;
 		startTime = TimeUtils.millis();
 	}
+	
+	private void finish(){
+		//One-time answer processing
+		for(BeatTouch b : beatInput){
+			double beatTime = b.timeStamp;
+			
+			int b1 = (int)Math.floor(beatTime / 5.0);
+			int b2 = (int)Math.ceil(beatTime / 5.0);
+			
+			Array<Beat> bu1 = songHash.get(b1);
+			if(b1 != b2){
+				bu1.addAll(songHash.get(b2,new Array<Beat>()));
+			}
+			
+			for(int i = 0; i < bu1.size; i++){
+				Beat testBeat = bu1.get(i);
+				testBeat.matched = false;
+			}
+			
+			boolean matches = false;
+			Beat matchingBeat = null;
+			for(int i = 0; i < bu1.size; i++){
+				Beat testBeat = bu1.get(i);
+				if(testBeat.pitchNumber == b.pitch && !testBeat.matched && testBeat.type > 0){
+					if(Math.abs(testBeat.beatTime - b.timeStamp) < 0.3*(BPM/120.0)){
+						matches = true;
+						matchingBeat = testBeat;
+						testBeat.matched = true;
+						break;
+					}
+				}
+			}
+
+			if(matches){
+				correct.add(matchingBeat);
+			}
+			else{
+				incorrect.add(new Beat(b.timeStamp,2,b.pitch));
+			}
+			
+			
+		}
+		
+		
+		finished = true;
+		
+		
+	}
+	
 	private void drawNoteFinal(Beat b, double x, SpriteBatch batch, int spacing)
 	{
 		int ballY = 325 + 8*b.pitchNumber;
@@ -129,7 +187,7 @@ public class NoteGame extends ApplicationAdapter {
 			}
 			else if (!b.barsToNext)
 			{
-			batch.draw(eighth_tail, (float)x + 22, tailY, 25, 1.5f*40.0f);
+				batch.draw(eighth_tail, (float)x + 22, tailY, 25, 1.5f*40.0f);
 			}
 			else{
 				batch.draw(stick, (float)x + 22, stickY, 3, 47+8*dif);
@@ -322,7 +380,7 @@ public class NoteGame extends ApplicationAdapter {
 						drawNote(b, x, batch);
 						
 						if(b.type == -5 && b.status == 1){
-							finished = true;
+							this.finish();
 							scrollX = 0;
 						}
 					}
@@ -349,55 +407,24 @@ public class NoteGame extends ApplicationAdapter {
 					drawNoteFinal(b,x,batch,(int)r/8);
 				}
 				
-				for(BeatTouch b : beatInput){
-					double beatTime = b.timeStamp;
-					
-					int b1 = (int)Math.floor(beatTime / 5.0);
-					int b2 = (int)Math.ceil(beatTime / 5.0);
-					
-					Array<Beat> bu1 = songHash.get(b1);
-					if(b1 != b2){
-						bu1.addAll(songHash.get(b2,new Array<Beat>()));
-					}
-					
-					for(int i = 0; i < bu1.size; i++){
-						Beat testBeat = bu1.get(i);
-						testBeat.matched = false;
-					}
-					
-					boolean matches = false;
-					Beat matchingBeat = null;
-					for(int i = 0; i < bu1.size; i++){
-						Beat testBeat = bu1.get(i);
-						if(testBeat.pitchNumber == b.pitch && !testBeat.matched && testBeat.type > 0){
-							if(Math.abs(testBeat.beatTime - b.timeStamp) < 0.3*(BPM/120.0)){
-								matches = true;
-								matchingBeat = testBeat;
-								testBeat.matched = true;
-								break;
-							}
-						}
-					}
-					
-					if(matches){
-						x = (r*(matchingBeat.beatTime - scrollX)/bWindow);
-						batch.setShader(colorShader);
-						colorShader.setUniform3fv("tint", new float[]{0.0f,1.0f,0.0f}, 0, 3);
-						drawNoteFinal(matchingBeat,x,batch,(int)r/8);
-						batch.setShader(null);
-					}
-					else{
-						x = (r*(beatTime - scrollX)/bWindow);
-						batch.setShader(colorShader);
-						colorShader.setUniform3fv("tint", new float[]{1.0f,0.0f,0.0f}, 0, 3);
-						drawNoteFinal(new Beat(beatTime,2,b.pitch),x,batch,(int)r/8);
-						batch.setShader(null);
-					}
-					
-					
-					
-					
+				batch.setShader(colorShader);
+				
+				colorShader.setUniform3fv("tint", new float[]{0.0f,1.0f,0.0f}, 0, 3);
+				for(Beat b : correct){
+					x = (r*((b.beatTime) - scrollX)/bWindow);
+					this.drawNoteFinal(b, x, batch, (int)r/8);
 				}
+				
+				batch.setShader(colorShader);
+				
+				colorShader.setUniform3fv("tint", new float[]{1.0f,0.0f,0.0f}, 0, 3);
+				
+				for(Beat b : incorrect){
+					x = (r*(b.beatTime - scrollX)/bWindow);
+					this.drawNoteFinal(b, x, batch, (int)r/8);
+				}
+				
+				batch.setShader(null);
 					
 				if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
 					scrollX-=0.25;
