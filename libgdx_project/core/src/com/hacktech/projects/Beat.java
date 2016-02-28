@@ -47,5 +47,6 @@ public class Beat{
 		this.beatTime = bt;
 		this.type = ty;
 		this.pitchNumber = pi;
+		this.dotted = dot;
 	}
 }

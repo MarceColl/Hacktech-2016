@@ -75,7 +75,9 @@ public class NoteGame extends ApplicationAdapter {
 		
 		beatSheet = new Array<Beat>();
 
-		beatSheet.add(new Beat(1,3,true));
+		beatSheet.add(new Beat(1,-1));
+		beatSheet.add(new Beat(2,-1));
+		beatSheet.add(new Beat(3,-1));
 		beatSheet.add(new Beat(4,-1));
 		beatSheet.add(new Beat(5,1));
 		beatSheet.add(new Beat(6, 1));
