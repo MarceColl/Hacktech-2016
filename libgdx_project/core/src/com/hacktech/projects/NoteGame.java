@@ -96,64 +96,7 @@ public class NoteGame extends ApplicationAdapter {
 	}
 	private void drawNoteFinal(Beat b, double x, SpriteBatch batch)
 	{
-		if (b.type == 1){
-			batch.draw(stick, (float)x + 100, 318, 3, 20);
-			batch.draw(ball, (float)x + 94, 312, 8, 8);
-			if (b.dotted)
-			{
-				batch.draw(dot, (float)x + 127, 307, 12, 12);
-			}
-		}
-		if (b.type == 2)
-		{
-			batch.draw(stick, (float)x + 100, 318, 3, 20);
-			batch.draw(ball, (float)x + 94, 312, 8, 8);
-			if (b.barredByPrev)
-			{
-				batch.draw(line_black, (float)x + 113, 337, -50, 10);
-			}
-			else if (!b.barsToNext)
-			{
-			batch.draw(eighth_tail, (float)x + 112, 290, 25, 1.5f*40.0f);
-			}
-		}
-		if (b.type == 3)
-		{
-			batch.draw(stick, (float)x + 110, 250, 3, 52);
-			batch.draw(half, (float)x  + 90, 200, 25, 15);	
-			if (b.dotted == true){
-				batch.draw(dot, (float)x + 120, 200,20, 20);
-			}
-		}
-		if (b.type == 4)
-		{
-			batch.draw(whole, (float)x + 92, 312, 14, 10);
-		}
-		if (b.type == 0){
-			batch.draw(line_black, (float)x+100, 311,3,35);
-		}
-		if (b.type == -1){
-			batch.draw(quarter_rest, (float)x + 82, 315, 27, 27);
-		}
-		if (b.type == -2){
-			batch.draw(eighth_rest, (float)x + 102, 285, 25, 48);
-		}
-		if (b.type == -3){
-			batch.draw(half_rest, (float)x+ 70, 304, 50, 35);
-		}
-		if (b.type == -4){
-			batch.draw(whole_rest, (float)x+70, 294, 50, 35);
-		}
-		if (b.type == -5)
-		{
-			batch.draw(line_black, (float)x+70, 311,10,34);
-			batch.draw(line_black, (float)x+63, 311,2,34);
-		}
-		
-	}
-	private void drawNote(Beat b, double x, SpriteBatch batch)
-	{
-		int ballY = 84 + 8*b.pitchNumber;
+		int ballY = 325 + 8*b.pitchNumber;
 		int stickY = ballY + (99 - 84);
 		int halfStick = ballY + (95 - 84);
 		int dotY = ballY + (77 - 84);
@@ -192,7 +135,78 @@ public class NoteGame extends ApplicationAdapter {
 			batch.draw(stick, (float)x + 20, halfStick, 3, 52);
 			batch.draw(half, (float)x, ballY, 25, 15);	
 			if (b.dotted == true){
-				batch.draw(dot, (float)x + 30, halfDot,20, 20);
+				batch.draw(dot, (float)x + 30, halfDot -10,20, 20);
+			}
+			
+		}
+		if (b.type == 4)
+		{
+			batch.draw(whole, (float)x, ballY, 25, 15);
+		}
+		if (b.type == 0){
+			batch.draw(line_black, (float)x+100, 311,3,35);
+		}
+		if (b.type == -1){
+			batch.draw(quarter_rest, (float)x + 82, 315, 27, 27);
+		}
+		if (b.type == -2){
+			batch.draw(eighth_rest, (float)x + 102, 285, 25, 48);
+		}
+		if (b.type == -3){
+			batch.draw(half_rest, (float)x+ 70, 304, 50, 35);
+		}
+		if (b.type == -4){
+			batch.draw(whole_rest, (float)x+70, 294, 50, 35);
+		}
+		if (b.type == -5)
+		{
+			batch.draw(line_black, (float)x+70, 311,10,34);
+			batch.draw(line_black, (float)x+63, 311,2,34);
+		}
+		
+	}
+	private void drawNote(Beat b, double x, SpriteBatch batch)
+	{
+		int ballY = 84 + 8*b.pitchNumber;
+		int stickY = ballY + (99 - 84);
+		int halfStick = ballY + (95 - 84);
+		int dotY = ballY + (77 - 84);
+		int halfDot = ballY + (75 - 74);
+		int barY = ballY + (137 - 84);
+		int tailY = ballY + (90 - 84);
+		
+		if (b.type == 1){
+			batch.draw(stick, (float)x + 52, stickY, 3, 47);
+			batch.draw(ball, (float)x + 30, ballY, 25, 15);
+			if (b.dotted)
+			{
+				batch.draw(dot, (float)x + 30, dotY, 20, 20);
+			}
+		}
+		if (b.type == 2)
+		{
+			batch.draw(stick, (float)x + 22, stickY, 3, 47);
+			batch.draw(ball, (float)x, ballY, 25, 15);
+			int dif = b.barNote - b.pitchNumber;
+			if (b.barredByPrev)
+			{
+				batch.draw(stick, (float)x + 22, stickY, 3, 47+8*dif);
+				batch.draw(line_black, (float)x + 23, barY+8*dif, -50, 10);
+			}
+			else if (!b.barsToNext)
+			{
+			batch.draw(eighth_tail, (float)x + 22, tailY, 25, 1.5f*40.0f);
+			}
+			else{
+				batch.draw(stick, (float)x + 22, stickY, 3, 47+8*dif);
+			}
+		}
+		if (b.type == 3)
+		{
+			batch.draw(stick, (float)x + 20, halfStick, 3, 52);
+			batch.draw(half, (float)x, ballY, 25, 15);	
+			if (b.dotted == true){
+				batch.draw(dot, (float)x + 30, halfDot -10,20, 20);
 			}
 		}
 		if (b.type == 4)
@@ -318,7 +332,7 @@ public class NoteGame extends ApplicationAdapter {
 			batch.draw(line_blue, 65,82,3,70);
 			if (finished == true){
 				int bWindow = 4;
-				batch.draw(staffBg, 0, 300, 800, 50);
+				batch.draw(staffBg, 0, 300, 500, 100);
 				
 				IntMap<Array<Beat>> songHashCopy = new IntMap<Array<Beat>>(songHash);
 				
@@ -326,7 +340,7 @@ public class NoteGame extends ApplicationAdapter {
 				double x = 0;
 			
 					for(Beat b : beatSheet){
-						x = (100.0*(b.beatTime)/bWindow) - 20;
+						x = 85 + (55.0*(b.beatTime)/bWindow);
 						drawNoteFinal(b,x,batch);
 					}
 					
