@@ -243,7 +243,7 @@ public class NoteGame extends ApplicationAdapter {
 			batch.draw(ball, (float)x + 30, ballY, 25, 15);
 			if (b.dotted)
 			{
-				batch.draw(dot, (float)x + 30, dotY, 20, 20);
+				batch.draw(dot, (float)x + 60, dotY, 20, 20);
 			}
 		}
 		if (b.type == 2)
