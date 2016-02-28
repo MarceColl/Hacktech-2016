@@ -130,17 +130,20 @@ public class NoteGame extends ApplicationAdapter {
 			}
 		}
 		else{
-			
-		
-		
 			long timeElapsed = TimeUtils.millis() - startTime;
 			
-			
-			
-			System.out.println(timeElapsed);
+			double min = (double)timeElapsed / (60.0*1000.0);
+			double beatsElapsed = BPM*min;
 			
 			batch.begin();
-		
+			
+			if(Math.ceil(beatsElapsed - 1) >= 1 && Math.ceil(beatsElapsed - 1) <= 4){
+				BitmapFont font =  new BitmapFont();
+				font.getData().scale(5.0f);
+				CharSequence str = ""+(int)Math.ceil(beatsElapsed - 1);
+				font.setColor(0.0f,0.0f,0.0f,1.0f);
+				font.draw(batch,str,Gdx.graphics.getWidth()/4.0f,3.0f*Gdx.graphics.getHeight()/4.0f);
+			}
 		
 			/*
 			 * DRAW THE STAFF / ANY BACKGROUND
@@ -152,8 +155,6 @@ public class NoteGame extends ApplicationAdapter {
 			 * RENDER THE BEATS
 			 */
 			
-			double min = (double)timeElapsed / (60.0*1000.0);
-			double beatsElapsed = BPM*min;
 			
 			Array<Beat> beatWindow = songHash.get((int)Math.floor(beatsElapsed/5.0));
 			if(beatWindow != null){
