@@ -90,7 +90,7 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 		beatSheet.add(new Beat(7,-1,true));
 		beatSheet.add(new Beat(8,-1));
 
-		beatSheet.addAll(mfp.getBeatsFromFile("demo1.xml"));
+		beatSheet.addAll(mfp.getBeatsFromFile("demo2.xml"));
 
 		mfp.addMeasureLines(beatSheet);
 
