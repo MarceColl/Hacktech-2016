@@ -1,13 +1,87 @@
 package com.hacktech.projects;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import music.Note;
+
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
+import com.mparser.musicXMLparserDH;
 
 public class MusicFileProcessor {
 	private final int BUCKET_SIZE = 5;
 	
 	public MusicFileProcessor(){
 		
+	}
+	
+	public Array<Beat> getBeatsFromFile(String fName){
+		Array<Beat> beats = new Array<Beat>();
+		musicXMLparserDH parser = null;
+		try {
+			parser = new musicXMLparserDH(fName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		parser.parseMusicXML();
+        ArrayList<Note> songSequenceOfNoteObjects = parser.getNotesOfSong();
+        System.out.println("ho");
+		for(Note n : songSequenceOfNoteObjects){
+			double st = (double)n.getStartTime();
+			
+			int duration = n.getDuration();
+			
+			int type = 0;
+			boolean dotted = false;
+			
+			switch(duration){
+				case 1:
+					type = 2;
+					break;
+				case 2: 
+					type = 1;
+					break;
+				case 3:
+					type = 1;
+					dotted = true;
+					break;
+				case 4:
+					type = 3;
+					break;
+				case 6:
+					type = 3;
+					dotted = true;
+					break;
+				case 8:
+					type = 4;
+					break;
+					
+			}
+			
+			String p = n.getPitch();
+			int pitch = 0;
+			if(p.equals("Z")){
+				type = -type;
+			}
+			
+			if(p.equals("F")){
+				pitch = 0;
+			}
+			if(p.equals("G")){
+				pitch = 1;
+			}
+			if(p.equals("A")){
+				pitch = 2;
+			}
+			
+			beats.add(new Beat(9 + st/2,type,pitch,dotted));
+		}
+        
+        return beats;
 	}
 	
 	public void addMeasureLines(Array<Beat> blist){

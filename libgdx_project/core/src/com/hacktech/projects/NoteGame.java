@@ -78,29 +78,17 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 		whole_rest = new Texture ("whole_rest.png");
 		dot = new Texture ("dot.png");
 
+
 		beatSheet = new Array<Beat>();
 
-
+		beatSheet.add(new Beat(3,-1,true));
 		beatSheet.add(new Beat(4,-1));
 		beatSheet.add(new Beat(5,-1,true));
 		beatSheet.add(new Beat(6,-1,true));
 		beatSheet.add(new Beat(7,-1,true));
 		beatSheet.add(new Beat(8,-1));
 
-		beatSheet.add(new Beat(9,-2));
-		beatSheet.add(new Beat(9.5, 2));
-		beatSheet.add(new Beat(10,-2));
-		beatSheet.add(new Beat(10.5,2,1));
-		beatSheet.add(new Beat(11,2,2));
-		beatSheet.add(new Beat(11.5,-2));
-		beatSheet.add(new Beat(12,1,1));
-		beatSheet.add(new Beat(13,2,1));
-		beatSheet.add(new Beat(13.5,2,1));
-		beatSheet.add(new Beat(14,1,true));
-		beatSheet.add(new Beat(15.5,2,true));
-		beatSheet.add(new Beat(16,2,true));
-		beatSheet.add(new Beat(16.5,2,true));
-		beatSheet.add(new Beat(17,1,true));
+		beatSheet.addAll(mfp.getBeatsFromFile("test.xml"));
 
 		mfp.addMeasureLines(beatSheet);
 
@@ -401,7 +389,7 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 
 
 				double x = 0;
-				double r = 300.0;
+				double r = 400.0;
 				for(Beat b : beatSheet){
 
 					x = (r*(b.beatTime - scrollX)/bWindow);
