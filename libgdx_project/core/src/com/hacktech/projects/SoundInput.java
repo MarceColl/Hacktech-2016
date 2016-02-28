@@ -72,6 +72,7 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
             throws LineUnavailableException,
             UnsupportedAudioFileException
     {
+    	getMixers();
         // float sampleRate, int sampleSizeInBits, int channels, boolean signed, boolean bigEndian
         final AudioFormat audioFormat = new AudioFormat(sampleRate, 16, 1, true, true);
         // Info about the sound data line
@@ -93,7 +94,7 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
 
 
         // Setup music device and data line
-        soundMixer = getMixerByName("Logitech Camera");
+        soundMixer = getMixerByName("Built-in Microphone");
         if(soundMixer == null) {
             throw new LineUnavailableException();
         }
@@ -195,6 +196,7 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
 
         for (Mixer.Info mi : AudioSystem.getMixerInfo()) {
             ret.add(mi);
+            System.out.println(mi.getName());
         }
         return ret;
     }

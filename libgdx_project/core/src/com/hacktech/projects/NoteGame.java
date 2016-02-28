@@ -80,7 +80,7 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 
 		beatSheet = new Array<Beat>();
 
-		beatSheet.add(new Beat(3,-1,true));
+
 		beatSheet.add(new Beat(4,-1));
 		beatSheet.add(new Beat(5,-1,true));
 		beatSheet.add(new Beat(6,-1,true));
