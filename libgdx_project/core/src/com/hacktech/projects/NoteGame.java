@@ -73,13 +73,18 @@ public class NoteGame extends ApplicationAdapter {
 		dot = new Texture ("dot.png");
 		
 		beatSheet = new Array<Beat>();
-		beatSheet.add(new Beat(1,1));
+		beatSheet.add(new Beat(1,1, true));
 		beatSheet.add(new Beat(2,1));
-		beatSheet.add(new Beat(3,-1));
-		beatSheet.add(new Beat(4,-1));
-		beatSheet.add(new Beat(5,1));
-		beatSheet.add(new Beat(6, 1));
-		beatSheet.add(new Beat(7,1));
+		beatSheet.add(new Beat(3, -2));
+		beatSheet.add(new Beat(3.5, -2));
+		beatSheet.add(new Beat(4,-2));
+		beatSheet.add(new Beat(4.5,-2));
+		beatSheet.add(new Beat(5, 2));
+		beatSheet.add(new Beat(5.5, 2));
+		beatSheet.add(new Beat(6, 2));
+		beatSheet.add(new Beat(6.5,2));
+		beatSheet.add(new Beat(7,2));
+		beatSheet.add(new Beat(7.5,2));
 		beatSheet.add(new Beat(8, 1));
 		beatSheet.add(new Beat(9, 4));
 		
@@ -95,17 +100,17 @@ public class NoteGame extends ApplicationAdapter {
 	private void drawNoteFinal(Beat b, double x, SpriteBatch batch)
 	{
 		if (b.type == 1){
-			batch.draw(stick, (float)x + 90, 320, 3, 47);
-			batch.draw(ball, (float)x + 90, 310, 8, 8);
+			batch.draw(stick, (float)x + 100, 318, 3, 20);
+			batch.draw(ball, (float)x + 94, 312, 8, 8);
 			if (b.dotted)
 			{
-				batch.draw(dot, (float)x + 90 + 30, 200, 20, 20);
+				batch.draw(dot, (float)x + 127, 307, 12, 12);
 			}
 		}
 		if (b.type == 2)
 		{
-			batch.draw(stick, (float)x + 112, 250, 3, 47);
-			batch.draw(ball, (float)x + 90, 200, 25, 15);
+			batch.draw(stick, (float)x + 100, 318, 3, 20);
+			batch.draw(ball, (float)x + 94, 312, 8, 8);
 			if (b.barredByPrev)
 			{
 				batch.draw(line_black, (float)x + 113, 337, -50, 10);
@@ -125,13 +130,13 @@ public class NoteGame extends ApplicationAdapter {
 		}
 		if (b.type == 4)
 		{
-			batch.draw(whole, (float)x + 90, 200, 25, 15);
+			batch.draw(whole, (float)x + 92, 312, 14, 10);
 		}
 		if (b.type == 0){
-			batch.draw(line_black, (float)x + 110, 282,3,70);
+			batch.draw(line_black, (float)x+100, 311,3,35);
 		}
 		if (b.type == -1){
-			batch.draw(quarter_rest, (float)x + 90, 285, 35, 20);
+			batch.draw(quarter_rest, (float)x + 82, 315, 27, 27);
 		}
 		if (b.type == -2){
 			batch.draw(eighth_rest, (float)x + 102, 285, 25, 48);
@@ -144,8 +149,8 @@ public class NoteGame extends ApplicationAdapter {
 		}
 		if (b.type == -5)
 		{
-			batch.draw(line_black, (float)x+70, 282,10,70);
-			batch.draw(line_black, (float)x+63, 282,2,70);
+			batch.draw(line_black, (float)x+70, 311,10,34);
+			batch.draw(line_black, (float)x+63, 311,2,34);
 		}
 		
 	}
@@ -302,6 +307,7 @@ public class NoteGame extends ApplicationAdapter {
 			batch.draw(line_blue, 86,82,3,70);
 			batch.draw(line_blue, 65,82,3,70);
 			if (finished == true){
+				int bWindow = 4;
 				batch.draw(staffBg, 0, 300, 800, 50);
 				
 				IntMap<Array<Beat>> songHashCopy = new IntMap<Array<Beat>>(songHash);
@@ -310,9 +316,8 @@ public class NoteGame extends ApplicationAdapter {
 				double x = 0;
 			
 					for(Beat b : beatSheet){
-						
+						x = (100.0*(b.beatTime)/bWindow) - 20;
 						drawNoteFinal(b,x,batch);
-						x = x + 30.0;
 					}
 					
 					
