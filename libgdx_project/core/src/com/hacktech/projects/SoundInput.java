@@ -33,10 +33,11 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
     double sensitivity = 35;
     double threshold = 5;
 
-    final int sampleRate = 44200;
+    final int sampleRate = 88200;
     final int bufferSize = 1024;
     final int overlap = 0;
 
+    int beat_counter = 0;
     long id_counter = 0;
 
     // NOTE PARAMETERS
@@ -78,9 +79,9 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
 
         handler = h;
         this.bpm = bpm;
-        threshold = (int)Math.ceil(getTimeBetweenEighthNotes()*sampleRate/bufferSize)*0.3;
+        threshold = (int)Math.ceil(getTimeBetweenEighthNotes()*sampleRate/8/bufferSize)*0.4;
 
-        noteBuffer = new Note[(int)Math.ceil(getTimeBetweenEighthNotes()*sampleRate/bufferSize)];
+        noteBuffer = new Note[(int)Math.ceil(getTimeBetweenEighthNotes()*sampleRate/8/bufferSize)];
 
 
         // Setup music device and data line
@@ -130,22 +131,22 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
             float pitch = pitchDetectionResult.getPitch();
 
             noteBufferCounter++;
-            if(noteBufferCounter == (int)Math.ceil(getTimeBetweenEighthNotes()*sampleRate/bufferSize)) {
+            if(noteBufferCounter == (int)Math.ceil(getTimeBetweenEighthNotes()*sampleRate/8/bufferSize)) {
                 noteBufferCounter = 0;
                 Note result = getAveragedNote();
                 System.out.println(result.name());
-                noteBuffer = new Note[(int)Math.ceil(getTimeBetweenEighthNotes()*sampleRate/bufferSize)];
+                noteBuffer = new Note[(int)Math.ceil(getTimeBetweenEighthNotes()*sampleRate/8/bufferSize)];
 
                 double timestamp = audioEvent.getTimeStamp();
 
                 if(result != Note.None) {
                     BeatTouch bt = null;
                     if (result == Note.F) {
-                        bt = new BeatTouch(timestamp, id_counter, 0);
+                        bt = new BeatTouch((timestamp - handler.getTimeOffset())/60*120, id_counter, 0);
                     } else if (result == Note.G) {
-                        bt = new BeatTouch(timestamp, id_counter, 1);
+                        bt = new BeatTouch((timestamp - handler.getTimeOffset())/60*120, id_counter, 1);
                     } else if (result == Note.A) {
-                        bt = new BeatTouch(timestamp, id_counter, 2);
+                        bt = new BeatTouch((timestamp - handler.getTimeOffset())/60*120, id_counter, 2);
                     }
 
                     id_counter++;
@@ -212,7 +213,7 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
 
     // Helper method to get number of eighth notes per second using bpm
     private float getEighthNotesPerSecond() {
-        return 1.0f/getEighthNotesPerSecond();
+        return 1.0f/getTimeBetweenEighthNotes();
     }
 
     // Helper method to get time between to eighth notes

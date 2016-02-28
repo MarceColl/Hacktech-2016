@@ -5,4 +5,5 @@ package com.hacktech.projects;
  */
 public interface PitchHandler {
     public void insertIntoQueue(BeatTouch bt);
+    public double getTimeOffset();
 }

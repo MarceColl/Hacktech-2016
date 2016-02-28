@@ -39,11 +39,16 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 	Texture eighth_rest;
 	Texture whole_rest;
 	Texture dot;
-	private final double BPM = 200;
+	private final double BPM = 120;
 	MusicFileProcessor mfp;
 
+	
+	Array<Beat> correct = new Array<Beat>();
+	Array<Beat> incorrect = new Array<Beat>();
 	boolean finished = false;
 	long startTime;
+	long clickTime;
+
 	Queue<BeatTouch> beatInput = new Queue<BeatTouch>();
 	IntMap<Array<Beat>> songHash = new IntMap<Array<Beat>>();
 	Array<Beat> beatSheet = new Array<Beat>();
@@ -81,26 +86,78 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 		beatSheet.add(new Beat(6,-1,true));
 		beatSheet.add(new Beat(7,-1,true));
 		beatSheet.add(new Beat(8,-1));
-		beatSheet.add(new Beat(9,1));
-		beatSheet.add(new Beat(10,1));
-		beatSheet.add(new Beat(11,2,0));
-		beatSheet.add(new Beat(11.5,2,1));
-		beatSheet.add(new Beat(12,2,2));
-		beatSheet.add(new Beat(12.5,-2,0));
-		beatSheet.add(new Beat(13,-2,2));
+
+		beatSheet.add(new Beat(9,-2));
+		beatSheet.add(new Beat(9.5, 2));
+		beatSheet.add(new Beat(10,-2));
+		beatSheet.add(new Beat(10.5,2,1));
+		beatSheet.add(new Beat(11,2,2));
+		beatSheet.add(new Beat(11.5,-2));
+		beatSheet.add(new Beat(12,1,1));
+		beatSheet.add(new Beat(13,2,1));
 		beatSheet.add(new Beat(13.5,2,1));
+		beatSheet.add(new Beat(14,1,true));
+		beatSheet.add(new Beat(15.5,2,true));
+		beatSheet.add(new Beat(16,2,true));
+		beatSheet.add(new Beat(16.5,2,true));
+		beatSheet.add(new Beat(17,1,true));
 
 		mfp.addMeasureLines(beatSheet);
 
 		songHash = mfp.makeListIntoHashTable(beatSheet);
 
 		SoundInput si = new SoundInput((float)BPM, this);
+		clickTime = TimeUtils.millis();
 	}
 
 	private void begin(){
 		startScreen = false;
 		startTime = TimeUtils.millis();
 	}
+	
+	private void finish(){
+		//One-time answer processing
+		for(BeatTouch b : beatInput){
+			double beatTime = b.timeStamp;
+			
+			int b1 = (int)Math.floor(beatTime / 5.0);
+			int b2 = (int)Math.ceil(beatTime / 5.0);
+			
+			Array<Beat> bu1 = songHash.get(b1);
+			if(b1 != b2){
+				bu1.addAll(songHash.get(b2,new Array<Beat>()));
+			}
+			
+			for(int i = 0; i < bu1.size; i++){
+				Beat testBeat = bu1.get(i);
+				testBeat.matched = false;
+			}
+			
+			boolean matches = false;
+			Beat matchingBeat = null;
+			for(int i = 0; i < bu1.size; i++){
+				Beat testBeat = bu1.get(i);
+				if(testBeat.pitchNumber == b.pitch && !testBeat.matched && testBeat.type > 0){
+					if(Math.abs(testBeat.beatTime - b.timeStamp) < 0.3*(BPM/120.0)){
+						matches = true;
+						matchingBeat = testBeat;
+						testBeat.matched = true;
+						break;
+					}
+				}
+			}
+
+			if(matches){
+				correct.add(matchingBeat);
+			}
+			else{
+				incorrect.add(new Beat(b.timeStamp,2,b.pitch));
+			}
+		}
+
+		finished = true;
+	}
+	
 	private void drawNoteFinal(Beat b, double x, SpriteBatch batch, int spacing)
 	{
 		int ballY = 325 + 8*b.pitchNumber;
@@ -187,7 +244,7 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 			batch.draw(ball, (float)x + 30, ballY, 25, 15);
 			if (b.dotted)
 			{
-				batch.draw(dot, (float)x + 30, dotY, 20, 20);
+				batch.draw(dot, (float)x + 60, dotY, 20, 20);
 			}
 		}
 		if (b.type == 2)
@@ -299,10 +356,10 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 
 
 			if(!finished){
-			
-			/*
-			 * RENDER THE BEATS
-			 */
+
+            /*
+             * RENDER THE BEATS
+             */
 				Array<Beat> beatWindow = songHash.get((int)Math.floor(beatsElapsed/5.0));
 				if(beatWindow != null){
 					if((int)Math.ceil(beatsElapsed/5.0) != (int)Math.floor(beatsElapsed/5.0)){
@@ -324,7 +381,7 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 							drawNote(b, x, batch);
 
 							if(b.type == -5 && b.status == 1){
-								finished = true;
+								this.finish();
 								scrollX = 0;
 							}
 						}
@@ -351,51 +408,24 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 					drawNoteFinal(b,x,batch,(int)r/8);
 				}
 
-				for(BeatTouch b : beatInput){
-					double beatTime = b.timeStamp;
+				batch.setShader(colorShader);
 
-					int b1 = (int)Math.floor(beatTime / 5.0);
-					int b2 = (int)Math.ceil(beatTime / 5.0);
-
-					Array<Beat> bu1 = songHash.get(b1);
-					if(b1 != b2){
-						bu1.addAll(songHash.get(b2,new Array<Beat>()));
-					}
-
-					for(int i = 0; i < bu1.size; i++){
-						Beat testBeat = bu1.get(i);
-						testBeat.matched = false;
-					}
-
-					boolean matches = false;
-					Beat matchingBeat = null;
-					for(int i = 0; i < bu1.size; i++){
-						Beat testBeat = bu1.get(i);
-						if(testBeat.pitchNumber == b.pitch && !testBeat.matched && testBeat.type > 0){
-							if(Math.abs(testBeat.beatTime - b.timeStamp) < 0.3*(BPM/120.0)){
-								matches = true;
-								matchingBeat = testBeat;
-								testBeat.matched = true;
-								break;
-							}
-						}
-					}
-
-					if(matches){
-						x = (r*(matchingBeat.beatTime - scrollX)/bWindow);
-						batch.setShader(colorShader);
-						colorShader.setUniform3fv("tint", new float[]{0.0f,1.0f,0.0f}, 0, 3);
-						drawNoteFinal(matchingBeat,x,batch,(int)r/8);
-						batch.setShader(null);
-					}
-					else{
-						x = (r*(beatTime - scrollX)/bWindow);
-						batch.setShader(colorShader);
-						colorShader.setUniform3fv("tint", new float[]{1.0f,0.0f,0.0f}, 0, 3);
-						drawNoteFinal(new Beat(beatTime,2,b.pitch),x,batch,(int)r/8);
-						batch.setShader(null);
-					}
+				colorShader.setUniform3fv("tint", new float[]{0.0f,1.0f,0.0f}, 0, 3);
+				for(Beat b : correct){
+					x = (r*((b.beatTime) - scrollX)/bWindow);
+					this.drawNoteFinal(b, x, batch, (int)r/8);
 				}
+
+				batch.setShader(colorShader);
+
+				colorShader.setUniform3fv("tint", new float[]{1.0f,0.0f,0.0f}, 0, 3);
+
+				for(Beat b : incorrect){
+					x = (r*(b.beatTime - scrollX)/bWindow);
+					this.drawNoteFinal(b, x, batch, (int)r/8);
+				}
+
+				batch.setShader(null);
 
 				if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
 					scrollX-=0.25;
@@ -410,6 +440,10 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 
 	public void insertIntoQueue(BeatTouch bt) {
 		beatInput.addFirst(bt);
+	}
+
+	public double getTimeOffset() {
+		return startTime/1000 - clickTime/1000;
 	}
 }
 
