@@ -25,6 +25,12 @@ public class NoteGame extends ApplicationAdapter {
 	Texture stick;
 	Texture eighth_tail;
 	Texture quarter_rest;
+	Texture half;
+	Texture whole;
+	Texture half_rest;
+	Texture eighth_rest;
+	Texture whole_rest;
+	Texture dot;
 	private final double BPM = 120;
 	MusicFileProcessor mfp;
 	
@@ -43,30 +49,25 @@ public class NoteGame extends ApplicationAdapter {
 		quarterNote = new Texture("quarterNote.png");
 		line_blue = new Texture("line_blue.png");
 		line_black = new Texture("line_black.png");
-
+		half = new Texture ("half.png");
 		eighth_note = new Texture ("eighth_note.png");
 		stick = new Texture ("stick.png");
 		ball = new Texture ("ball.png");
 		bar = new Texture ("bar.png");
 		eighth_tail = new Texture ("eighth_tail.png");
-	
+		whole = new Texture ("whole.png");
 		quarter_rest = new Texture("quarter_rest.png");
+		half_rest = new Texture ("half_rest.png");
+		eighth_rest = new Texture ("eighth_rest.png");
+		whole_rest = new Texture ("whole_rest.png");
+		dot = new Texture ("dot.png");
 		
 		Array<Beat> beatSheet = new Array<Beat>();
 		beatSheet.add(new Beat(3,-1));
 		beatSheet.add(new Beat(4,-1));
-		beatSheet.add(new Beat(5,-1));
-		beatSheet.add(new Beat(6,-1));
-		beatSheet.add(new Beat(7,-1));
-		beatSheet.add(new Beat(8,-1));
-
-		beatSheet.add(new Beat(9,1));
-		beatSheet.add(new Beat(10,2));
-		beatSheet.add(new Beat(10.5,2));
-		beatSheet.add(new Beat(11, 2));
-		beatSheet.add(new Beat(11.5, 2));
-		beatSheet.add(new Beat(12, 2));
-		beatSheet.add(new Beat(12.5, 2));
+		beatSheet.add(new Beat(5,1));
+		beatSheet.add(new Beat(6,3, true));
+		beatSheet.add(new Beat(9,4));
 		
 		mfp.addMeasureLines(beatSheet);
 		
@@ -74,13 +75,18 @@ public class NoteGame extends ApplicationAdapter {
 	}
 	private void drawNote(Beat b, double x, SpriteBatch batch)
 	{
-		if (b.type >= 1){
-			batch.draw(ball, (float)x, 84, 25, 15);
+		if (b.type == 1){
 			batch.draw(stick, (float)x + 22, 100, 3, 47);
-			
+			batch.draw(ball, (float)x, 84, 25, 15);
+			if (b.dotted)
+			{
+				batch.draw(dot, (float)x + 30, 77, 20, 20);
+			}
 		}
-		if (b.type >= 2)
+		if (b.type == 2)
 		{
+			batch.draw(stick, (float)x + 22, 100, 3, 47);
+			batch.draw(ball, (float)x, 84, 25, 15);
 			if (b.barredByPrev)
 			{
 				batch.draw(line_black, (float)x + 23, 137, -50, 10);
@@ -90,11 +96,32 @@ public class NoteGame extends ApplicationAdapter {
 			batch.draw(eighth_tail, (float)x + 22, 90, 25, 1.5f*40.0f);
 			}
 		}
+		if (b.type == 3)
+		{
+			batch.draw(stick, (float)x + 20, 95, 3, 52);
+			batch.draw(half, (float)x, 84, 25, 15);	
+			if (b.dotted == true){
+				batch.draw(dot, (float)x + 30, 75,20, 20);
+			}
+		}
+		if (b.type == 4)
+		{
+			batch.draw(whole, (float)x, 84, 25, 15);
+		}
 		if (b.type == 0){
 			batch.draw(line_black, (float)x + 20, 82,3,70);
 		}
-		else if (b.type == -1){
+		if (b.type == -1){
 			batch.draw(quarter_rest, (float)x, 85, 35, 1.7f*35.0f);
+		}
+		if (b.type == -2){
+			batch.draw(eighth_rest, (float)x + 12, 85, 25, 48);
+		}
+		if (b.type == -3){
+			batch.draw(half_rest, (float)x-20, 104, 50, 35);
+		}
+		if (b.type == -4){
+			batch.draw(whole_rest, (float)x-20, 94, 50, 35);
 		}
 	}
 	@Override
@@ -150,7 +177,8 @@ public class NoteGame extends ApplicationAdapter {
 		/*
 		 * Render beat line
 		 */
-		batch.draw(line_blue, 68,82,3,70);
+		batch.draw(line_blue, 86,82,3,70);
+		batch.draw(line_blue, 65,82,3,70);
 		
 		
 		batch.end();

@@ -22,14 +22,16 @@ public class MusicFileProcessor {
 			beatSum += delta;
 			
 			if(delta == 0.5 && (int)Math.floor(prevBeat.beatTime) == (int)Math.ceil(prevBeat.beatTime)){
-				prevBeat.barsToNext = true;
-				b.barredByPrev = true;
+				if(prevBeat.type == 2 && b.type == 2){
+					prevBeat.barsToNext = true;
+					b.barredByPrev = true;
+				}
 			}
 			
 			prevBeat = b;
 			
 			if(Math.abs(beatSum - finalBeat) < 0.001){
-				measureLines.add(new Beat(b.beatTime - delta/2.0,0));
+				measureLines.add(new Beat(b.beatTime - Math.min(delta/2.0,.5),0));
 				beatSum = 0;
 			}
 		}
