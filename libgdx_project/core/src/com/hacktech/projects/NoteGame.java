@@ -2,6 +2,7 @@ package com.hacktech.projects;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -14,6 +15,8 @@ import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class NoteGame extends ApplicationAdapter {
+	boolean touchHeld = false;
+	long id = 0;
 	private boolean startScreen = true;
 	
 	
@@ -35,13 +38,14 @@ public class NoteGame extends ApplicationAdapter {
 	Texture eighth_rest;
 	Texture whole_rest;
 	Texture dot;
-	private final double BPM = 120;
+	private final double BPM = 200;
 	MusicFileProcessor mfp;
 	
 	boolean finished = false;
 	long startTime;
 	Queue<BeatTouch> beatInput = new Queue<BeatTouch>();
 	IntMap<Array<Beat>> songHash = new IntMap<Array<Beat>>(); 
+	Array<Beat> beatSheet = new Array<Beat>();
 	@Override
 	public void create () {
 		
@@ -68,12 +72,16 @@ public class NoteGame extends ApplicationAdapter {
 		whole_rest = new Texture ("whole_rest.png");
 		dot = new Texture ("dot.png");
 		
-		Array<Beat> beatSheet = new Array<Beat>();
+		beatSheet = new Array<Beat>();
+		beatSheet.add(new Beat(1,1));
+		beatSheet.add(new Beat(2,1));
 		beatSheet.add(new Beat(3,-1));
 		beatSheet.add(new Beat(4,-1));
 		beatSheet.add(new Beat(5,1));
-		beatSheet.add(new Beat(6,3, true));
-		beatSheet.add(new Beat(9,4));
+		beatSheet.add(new Beat(6, 1));
+		beatSheet.add(new Beat(7,1));
+		beatSheet.add(new Beat(8, 1));
+		beatSheet.add(new Beat(9, 4));
 		
 		mfp.addMeasureLines(beatSheet);
 		
@@ -84,7 +92,63 @@ public class NoteGame extends ApplicationAdapter {
 		startScreen = false;
 		startTime = TimeUtils.millis();
 	}
-	
+	private void drawNoteFinal(Beat b, double x, SpriteBatch batch)
+	{
+		if (b.type == 1){
+			batch.draw(stick, (float)x + 90, 320, 3, 47);
+			batch.draw(ball, (float)x + 90, 310, 8, 8);
+			if (b.dotted)
+			{
+				batch.draw(dot, (float)x + 90 + 30, 200, 20, 20);
+			}
+		}
+		if (b.type == 2)
+		{
+			batch.draw(stick, (float)x + 112, 250, 3, 47);
+			batch.draw(ball, (float)x + 90, 200, 25, 15);
+			if (b.barredByPrev)
+			{
+				batch.draw(line_black, (float)x + 113, 337, -50, 10);
+			}
+			else if (!b.barsToNext)
+			{
+			batch.draw(eighth_tail, (float)x + 112, 290, 25, 1.5f*40.0f);
+			}
+		}
+		if (b.type == 3)
+		{
+			batch.draw(stick, (float)x + 110, 250, 3, 52);
+			batch.draw(half, (float)x  + 90, 200, 25, 15);	
+			if (b.dotted == true){
+				batch.draw(dot, (float)x + 120, 200,20, 20);
+			}
+		}
+		if (b.type == 4)
+		{
+			batch.draw(whole, (float)x + 90, 200, 25, 15);
+		}
+		if (b.type == 0){
+			batch.draw(line_black, (float)x + 110, 282,3,70);
+		}
+		if (b.type == -1){
+			batch.draw(quarter_rest, (float)x + 90, 285, 35, 20);
+		}
+		if (b.type == -2){
+			batch.draw(eighth_rest, (float)x + 102, 285, 25, 48);
+		}
+		if (b.type == -3){
+			batch.draw(half_rest, (float)x+ 70, 304, 50, 35);
+		}
+		if (b.type == -4){
+			batch.draw(whole_rest, (float)x+70, 294, 50, 35);
+		}
+		if (b.type == -5)
+		{
+			batch.draw(line_black, (float)x+70, 282,10,70);
+			batch.draw(line_black, (float)x+63, 282,2,70);
+		}
+		
+	}
 	private void drawNote(Beat b, double x, SpriteBatch batch)
 	{
 		if (b.type == 1){
@@ -140,6 +204,7 @@ public class NoteGame extends ApplicationAdapter {
 			batch.draw(line_black, (float)x-20, 82,10,70);
 			batch.draw(line_black, (float)x-27, 82,2,70);
 		}
+		
 	}
 	@Override
 	public void render () {
@@ -167,6 +232,19 @@ public class NoteGame extends ApplicationAdapter {
 			
 			double min = (double)timeElapsed / (60.0*1000.0);
 			double beatsElapsed = BPM*min;
+			if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
+			{
+				if (!touchHeld)
+				{
+					beatInput.addFirst(new BeatTouch(beatsElapsed, id++));
+					
+					System.out.println(beatsElapsed + " " + id);
+					touchHeld = true;
+				}
+			}
+			else{
+				touchHeld = false;
+			}
 			
 			batch.begin();
 			
@@ -223,6 +301,27 @@ public class NoteGame extends ApplicationAdapter {
 			 */
 			batch.draw(line_blue, 86,82,3,70);
 			batch.draw(line_blue, 65,82,3,70);
+			if (finished == true){
+				batch.draw(staffBg, 0, 300, 800, 50);
+				
+				IntMap<Array<Beat>> songHashCopy = new IntMap<Array<Beat>>(songHash);
+				
+				
+				double x = 0;
+			
+					for(Beat b : beatSheet){
+						
+						drawNoteFinal(b,x,batch);
+						x = x + 30.0;
+					}
+					
+					
+				
+					
+			
+				
+				
+			}
 
 		
 			
@@ -233,6 +332,10 @@ public class NoteGame extends ApplicationAdapter {
 
 
 class BeatTouch{
-	long timeStamp;
-	long id;
+	double timeStamp;
+	long identity;
+	public BeatTouch(double ts, long id){
+		this.timeStamp = ts;
+		this.identity = id;
+	}
 }

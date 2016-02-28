@@ -51,7 +51,14 @@ public class MusicFileProcessor {
 		}
 		
 		Beat last = blist.get(blist.size - 1);
-		double ls = last.beatTime + finalBeat - (last.beatTime % finalBeat);
+		double ls;
+		if (last.beatTime % finalBeat == 0){
+			ls = last.beatTime + finalBeat - 4;
+		}
+		else
+		{
+			ls = last.beatTime + finalBeat - (last.beatTime % finalBeat);
+		}
 		
 		blist.addAll(measureLines);
 		blist.add(new Beat(ls+1,-5));
@@ -60,7 +67,8 @@ public class MusicFileProcessor {
 	
 	public IntMap<Array<Beat>> makeListIntoHashTable(Array<Beat> bList){
 		IntMap<Array<Beat>> bMap = new IntMap<Array<Beat>>();
-		for(Beat b : bList){
+		for(int i = 0; i < bList.size; i++){
+			Beat b = bList.get(i);
 			int k = (int) Math.floor(b.beatTime / (double)this.BUCKET_SIZE);
 			Array<Beat> bs = bMap.get(k, new Array<Beat>());
 			bs.add(b);
