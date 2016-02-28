@@ -19,6 +19,7 @@ public class NoteGame extends ApplicationAdapter {
 	long id = 0;
 	private boolean startScreen = true;
 	
+	double scrollX = 0;
 	
 	ShaderProgram colorShader;
 	SpriteBatch batch;
@@ -94,7 +95,7 @@ public class NoteGame extends ApplicationAdapter {
 		startScreen = false;
 		startTime = TimeUtils.millis();
 	}
-	private void drawNoteFinal(Beat b, double x, SpriteBatch batch)
+	private void drawNoteFinal(Beat b, double x, SpriteBatch batch, int spacing)
 	{
 		int ballY = 325 + 8*b.pitchNumber;
 		int stickY = ballY + (99 - 84);
@@ -120,7 +121,7 @@ public class NoteGame extends ApplicationAdapter {
 			if (b.barredByPrev)
 			{
 				batch.draw(stick, (float)x + 22, stickY, 3, 47+8*dif);
-				batch.draw(line_black, (float)x + 23, barY+8*dif, -50, 10);
+				batch.draw(line_black, (float)x + 23, barY+8*dif, -spacing, 10);
 			}
 			else if (!b.barsToNext)
 			{
@@ -144,24 +145,24 @@ public class NoteGame extends ApplicationAdapter {
 			batch.draw(whole, (float)x, ballY, 25, 15);
 		}
 		if (b.type == 0){
-			batch.draw(line_black, (float)x+100, 311,3,35);
+			batch.draw(line_black, (float)x + 20, 322,3,70);
 		}
 		if (b.type == -1){
-			batch.draw(quarter_rest, (float)x + 82, 315, 27, 27);
+			batch.draw(quarter_rest, (float)x, 325, 35, 1.7f*35.0f);
 		}
 		if (b.type == -2){
-			batch.draw(eighth_rest, (float)x + 102, 285, 25, 48);
+			batch.draw(eighth_rest, (float)x + 12, 325, 25, 48);
 		}
 		if (b.type == -3){
-			batch.draw(half_rest, (float)x+ 70, 304, 50, 35);
+			batch.draw(half_rest, (float)x-20, 325, 50, 35);
 		}
 		if (b.type == -4){
-			batch.draw(whole_rest, (float)x+70, 294, 50, 35);
+			batch.draw(whole_rest, (float)x-20, 325, 50, 35);
 		}
 		if (b.type == -5)
 		{
-			batch.draw(line_black, (float)x+70, 311,10,34);
-			batch.draw(line_black, (float)x+63, 311,2,34);
+			batch.draw(line_black, (float)x-20, 322,10,70);
+			batch.draw(line_black, (float)x-27, 322,2,70);
 		}
 		
 	}
@@ -318,6 +319,7 @@ public class NoteGame extends ApplicationAdapter {
 						
 						if(b.type == -5 && b.status == 1){
 							finished = true;
+							scrollX = 0;
 						}
 					}
 				}
@@ -330,21 +332,25 @@ public class NoteGame extends ApplicationAdapter {
 			 */
 			batch.draw(line_blue, 86,82,3,70);
 			batch.draw(line_blue, 65,82,3,70);
-			if (finished == true){
+			if (finished){
 				int bWindow = 4;
-				batch.draw(staffBg, 0, 300, 500, 100);
-				
-				IntMap<Array<Beat>> songHashCopy = new IntMap<Array<Beat>>(songHash);
+				batch.draw(staffBg, 0, 300, 700, 100);
 				
 				
 				double x = 0;
-			
-					for(Beat b : beatSheet){
-						x = 85 + (55.0*(b.beatTime)/bWindow);
-						drawNoteFinal(b,x,batch);
-					}
+				double r = 300.0;
+				for(Beat b : beatSheet){
 					
+					x = (r*(b.beatTime - scrollX)/bWindow);
+					drawNoteFinal(b,x,batch,(int)r/8);
+				}
 					
+				if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+					scrollX-=0.25;
+				}
+				else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+					scrollX+=0.25;
+				}
 				
 					
 			
