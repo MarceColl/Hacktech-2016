@@ -33,8 +33,8 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
     double sensitivity = 35;
     double threshold = 5;
 
-    final int sampleRate = 16000;
-    final int bufferSize = 128;
+    final int sampleRate = 8192;
+    final int bufferSize = 64;
     final int overlap = 0;
 
     int beat_counter = 0;
@@ -72,7 +72,6 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
             throws LineUnavailableException,
             UnsupportedAudioFileException
     {
-    	getMixers();
         // float sampleRate, int sampleSizeInBits, int channels, boolean signed, boolean bigEndian
         final AudioFormat audioFormat = new AudioFormat(sampleRate, 16, 1, true, true);
         // Info about the sound data line
@@ -94,7 +93,7 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
 
 
         // Setup music device and data line
-        soundMixer = getMixerByName("Built-in Microphone");
+        soundMixer = getMixerByName("Logitech Camera");
         if(soundMixer == null) {
             throw new LineUnavailableException();
         }
@@ -173,6 +172,8 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
                             System.out.println(result.name());
                             id_counter++;
                             handler.insertIntoQueue(bt);
+                            break_counter = BREAK_THRESHOLD;
+                            //last_note = Note.None;
                             note_sent = true;
                         }
                     } else {
