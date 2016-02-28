@@ -357,16 +357,23 @@ public class NoteGame extends ApplicationAdapter {
 					
 					Array<Beat> bu1 = songHash.get(b1);
 					if(b1 != b2){
-						bu1.addAll(songHash.get(b2));
+						bu1.addAll(songHash.get(b2,new Array<Beat>()));
+					}
+					
+					for(int i = 0; i < bu1.size; i++){
+						Beat testBeat = bu1.get(i);
+						testBeat.matched = false;
 					}
 					
 					boolean matches = false;
 					Beat matchingBeat = null;
-					for(Beat testBeat : bu1){
-						if(testBeat.pitchNumber == b.pitch){
+					for(int i = 0; i < bu1.size; i++){
+						Beat testBeat = bu1.get(i);
+						if(testBeat.pitchNumber == b.pitch && !testBeat.matched && testBeat.type > 0){
 							if(Math.abs(testBeat.beatTime - b.timeStamp) < 0.3){
 								matches = true;
 								matchingBeat = testBeat;
+								testBeat.matched = true;
 								break;
 							}
 						}

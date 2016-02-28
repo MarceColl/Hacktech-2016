@@ -2,6 +2,7 @@ package com.hacktech.projects;
 
 public class Beat{
 	double beatTime;
+	boolean matched = false;
 	/*
 	 * Type: 
 	 * 		0 = Measure
