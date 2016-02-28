@@ -347,15 +347,47 @@ public class NoteGame extends ApplicationAdapter {
 				
 				for(BeatTouch b : beatInput){
 					double beatTime = b.timeStamp;
-					x = (r*(beatTime - scrollX)/bWindow);
+					
 					
 					//TODO: Check each beat input to see if it matches against a note in the hash table
 					//If so, show it in GREEN :)
 					
-					batch.setShader(colorShader);
-					colorShader.setUniform3fv("tint", new float[]{1.0f,0.0f,0.0f}, 0, 3);
-					drawNoteFinal(new Beat(beatTime,2,b.pitch),x,batch,(int)r/8);
-					batch.setShader(null);
+					int b1 = (int)Math.floor(beatTime / 5.0);
+					int b2 = (int)Math.ceil(beatTime / 5.0);
+					
+					Array<Beat> bu1 = songHash.get(b1);
+					if(b1 != b2){
+						bu1.addAll(songHash.get(b2));
+					}
+					
+					boolean matches = false;
+					Beat matchingBeat = null;
+					for(Beat testBeat : bu1){
+						if(testBeat.pitchNumber == b.pitch){
+							if(Math.abs(testBeat.beatTime - b.timeStamp) < 0.3){
+								matches = true;
+								matchingBeat = testBeat;
+								break;
+							}
+						}
+					}
+					
+					if(matches){
+						x = (r*(matchingBeat.beatTime - scrollX)/bWindow);
+						batch.setShader(colorShader);
+						colorShader.setUniform3fv("tint", new float[]{0.0f,1.0f,0.0f}, 0, 3);
+						drawNoteFinal(matchingBeat,x,batch,(int)r/8);
+						batch.setShader(null);
+					}
+					else{
+						x = (r*(beatTime - scrollX)/bWindow);
+						batch.setShader(colorShader);
+						colorShader.setUniform3fv("tint", new float[]{1.0f,0.0f,0.0f}, 0, 3);
+						drawNoteFinal(new Beat(beatTime,2,b.pitch),x,batch,(int)r/8);
+						batch.setShader(null);
+					}
+					
+					
 					
 					
 				}
