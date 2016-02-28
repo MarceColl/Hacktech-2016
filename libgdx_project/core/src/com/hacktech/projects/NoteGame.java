@@ -73,7 +73,6 @@ public class NoteGame extends ApplicationAdapter {
 		beatSheet.add(new Beat(5,1));
 		beatSheet.add(new Beat(6,3, true));
 		beatSheet.add(new Beat(9,4));
-		beatSheet.add(new Beat(13,-5));
 		
 		mfp.addMeasureLines(beatSheet);
 		

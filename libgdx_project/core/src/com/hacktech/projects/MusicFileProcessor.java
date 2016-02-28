@@ -54,7 +54,7 @@ public class MusicFileProcessor {
 		double ls = last.beatTime + finalBeat - (last.beatTime % finalBeat);
 		
 		blist.addAll(measureLines);
-		blist.add(new Beat(ls,-5));
+		blist.add(new Beat(ls+1,-5));
 		
 	}
 	
