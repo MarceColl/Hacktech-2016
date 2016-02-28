@@ -33,12 +33,20 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
     double sensitivity = 35;
     double threshold = 5;
 
-    final int sampleRate = 88200;
-    final int bufferSize = 1024;
+    final int sampleRate = 16000;
+    final int bufferSize = 128;
     final int overlap = 0;
 
     int beat_counter = 0;
     long id_counter = 0;
+
+    Note last_note;
+    int last_note_counter = 0;
+    int break_counter = 0;
+    boolean note_sent = false;
+
+    final int BREAK_THRESHOLD = 2;
+    final int NOTE_THRESHOLD = 2;
 
     // NOTE PARAMETERS
     float noteOffset = 0.0f;
@@ -126,35 +134,53 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
     // Callback that handles a pitch detection object
     @Override
     public void handlePitch(PitchDetectionResult pitchDetectionResult, AudioEvent audioEvent) {
-        if(pitchDetectionResult.getPitch() != -1) {
-            double timeStamp = audioEvent.getTimeStamp();
-            float pitch = pitchDetectionResult.getPitch();
+        if(handler.hasStarted()) {
+            if (pitchDetectionResult.getPitch() != -1) {
+                double timeStamp = audioEvent.getTimeStamp();
+                float pitch = pitchDetectionResult.getPitch();
 
-            noteBufferCounter++;
-            if(noteBufferCounter == (int)Math.ceil(getTimeBetweenEighthNotes()*sampleRate/8/bufferSize)) {
-                noteBufferCounter = 0;
-                Note result = getAveragedNote();
-                System.out.println(result.name());
-                noteBuffer = new Note[(int)Math.ceil(getTimeBetweenEighthNotes()*sampleRate/8/bufferSize)];
+                noteBufferCounter++;
+                if (noteBufferCounter == (int) Math.ceil(getTimeBetweenEighthNotes() * sampleRate / 8 / bufferSize)) {
+                    noteBufferCounter = 0;
+                    Note result = getAveragedNote();
+                    noteBuffer = new Note[(int) Math.ceil(getTimeBetweenEighthNotes() * sampleRate / 8 / bufferSize)];
 
-                double timestamp = audioEvent.getTimeStamp();
+                    double timestamp = audioEvent.getTimeStamp();
 
-                if(result != Note.None) {
-                    BeatTouch bt = null;
-                    if (result == Note.F) {
-                        bt = new BeatTouch((timestamp - handler.getTimeOffset())/60*120, id_counter, 0);
-                    } else if (result == Note.G) {
-                        bt = new BeatTouch((timestamp - handler.getTimeOffset())/60*120, id_counter, 1);
-                    } else if (result == Note.A) {
-                        bt = new BeatTouch((timestamp - handler.getTimeOffset())/60*120, id_counter, 2);
+                    if (result == last_note && result != Note.None) {
+                        last_note_counter++;
+                    } else {
+                        break_counter++;
                     }
 
-                    id_counter++;
-                    handler.insertIntoQueue(bt);
+                    if (break_counter > BREAK_THRESHOLD) {
+                        last_note_counter = 0;
+                        break_counter = 0;
+                        last_note = Note.None;
+                        note_sent = false;
+                    } else if (last_note_counter > NOTE_THRESHOLD && !note_sent) {
+                        if (result != Note.None) {
+                            BeatTouch bt = null;
+                            if (result == Note.F) {
+                                bt = new BeatTouch((timestamp - handler.getTimeOffset()) / 60 * 120, id_counter, 0);
+                            } else if (result == Note.G) {
+                                bt = new BeatTouch((timestamp - handler.getTimeOffset()) / 60 * 120, id_counter, 1);
+                            } else if (result == Note.A) {
+                                bt = new BeatTouch((timestamp - handler.getTimeOffset()) / 60 * 120, id_counter, 2);
+                            }
+
+                            System.out.println(result.name());
+                            id_counter++;
+                            handler.insertIntoQueue(bt);
+                            note_sent = true;
+                        }
+                    } else {
+                        last_note = result;
+                    }
+                } else {
+                    Note note = getNoteByFrequency(pitch);
+                    noteBuffer[noteBufferCounter - 1] = note;
                 }
-            } else {
-                Note note = getNoteByFrequency(pitch);
-                noteBuffer[noteBufferCounter - 1] = note;
             }
         }
     }
