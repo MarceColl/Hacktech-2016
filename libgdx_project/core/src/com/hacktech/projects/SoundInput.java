@@ -93,7 +93,7 @@ public class SoundInput implements OnsetHandler, PitchDetectionHandler {
 
 
         // Setup music device and data line
-        soundMixer = getMixerByName("Logitech Camera");
+        soundMixer = getMixerByName("Built-in Microphone");
         if(soundMixer == null) {
             throw new LineUnavailableException();
         }
