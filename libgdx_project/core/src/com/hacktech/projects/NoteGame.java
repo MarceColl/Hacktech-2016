@@ -137,7 +137,8 @@ public class NoteGame extends ApplicationAdapter {
 		}
 		if (b.type == -5)
 		{
-			batch.draw(line_black, (float)x-20, 82,12,70);
+			batch.draw(line_black, (float)x-20, 82,10,70);
+			batch.draw(line_black, (float)x-27, 82,2,70);
 		}
 	}
 	@Override
