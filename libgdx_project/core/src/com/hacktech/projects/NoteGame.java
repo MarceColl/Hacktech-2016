@@ -207,10 +207,10 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 			batch.draw(eighth_rest, (float)x + 12, 325, 25, 48);
 		}
 		if (b.type == -3){
-			batch.draw(half_rest, (float)x-20, 325, 50, 35);
+			batch.draw(half_rest, (float)x-20, 345, 50, 35);
 		}
 		if (b.type == -4){
-			batch.draw(whole_rest, (float)x-20, 325, 50, 35);
+			batch.draw(whole_rest, (float)x-20, 335, 50, 35);
 		}
 		if (b.type == -5)
 		{

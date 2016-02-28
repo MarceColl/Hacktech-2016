@@ -40,7 +40,7 @@
           <octave>4</octave>
         </pitch>
         <duration>1</duration>
-        <type>eighth</type>
+        
         <stem>up</stem>
         <notations>
           <dynamics>
@@ -59,7 +59,7 @@
           <octave>4</octave>
         </pitch>
         <duration>1</duration>
-        <type>eighth</type>
+        
         <stem>up</stem>
         <notations>
           <dynamics>
@@ -78,7 +78,7 @@
           <octave>4</octave>
         </pitch>
         <duration>1</duration>
-        <type>eighth</type>
+        
         <stem>up</stem>
         <notations>
           <dynamics>
@@ -99,7 +99,7 @@
             <octave>4</octave>
           </pitch>
           <duration>3</duration>
-          <type>eighth</type>
+         
           <dot/>
           <stem>up</stem>
           <lyric>
@@ -115,7 +115,7 @@
             <octave>4</octave>
           </pitch>
           <duration>1</duration>
-          <type>eighth</type>
+          
           <stem>up</stem>
           <lyric>
             <syllabic>begin</syllabic>
@@ -130,7 +130,7 @@
             <octave>4</octave>
           </pitch>
           <duration>1</duration>
-          <type>eighth</type>
+          
           <stem>up</stem>
           <beam number="1">begin</beam>
           <beam number="2">begin</beam>
@@ -150,7 +150,7 @@
             <octave>4</octave>
           </pitch>
           <duration>1</duration>
-          <type>eighth</type>
+         
           <stem>up</stem>
           <beam number="1">end</beam>
           <beam number="2">end</beam>
@@ -161,6 +161,27 @@
             <extend/>
           </lyric>
         </note>
+        <note>
+        <rest/>
+        <duration>2</duration>
+        <voice>1</voice>
+        <type>eighth</type>
+        <staff>1</staff>
+       </note>
+       <note>
+        <rest/>
+        <duration>4</duration>
+        <voice>1</voice>
+        <type>eighth</type>
+        <staff>1</staff>
+       </note>
+       <note>
+        <rest/>
+        <duration>8</duration>
+        <voice>1</voice>
+        <type>eighth</type>
+        <staff>1</staff>
+       </note>
       </measure>
     </part>
   </score-partwise>
