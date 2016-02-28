@@ -344,6 +344,16 @@ public class NoteGame extends ApplicationAdapter {
 					x = (r*(b.beatTime - scrollX)/bWindow);
 					drawNoteFinal(b,x,batch,(int)r/8);
 				}
+				
+				for(BeatTouch b : beatInput){
+					double beatTime = BPM*(b.timeStamp / 60.0);
+					x = (r*(beatTime - scrollX)/bWindow);
+					
+					batch.setShader(colorShader);
+					colorShader.setUniform3fv("tint", new float[]{1.0f,0.0f,0.0f}, 0, 3);
+					drawNoteFinal(new Beat(beatTime,2),x,batch,(int)r/8);
+					batch.setShader(null);
+				}
 					
 				if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
 					scrollX-=0.25;
@@ -351,8 +361,7 @@ public class NoteGame extends ApplicationAdapter {
 				else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 					scrollX+=0.25;
 				}
-				
-					
+	
 			
 				
 				

@@ -10,5 +10,5 @@ uniform vec3 tint;
 
 void main() {
         vec3 color = texture2D(u_texture, v_texCoords).rgb;
-        gl_FragColor = v_texCoords.x*vec4(tint, texture2D(u_texture, v_texCoords).a);
+        gl_FragColor = vec4(tint, texture2D(u_texture, v_texCoords).a);
 }
