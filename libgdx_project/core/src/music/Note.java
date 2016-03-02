@@ -291,7 +291,6 @@ public class Note {
 
             this.midiPitch = baseMidi + ( 12 * (this.octave + 1));
 
-            int test = 0;
         }
 
 

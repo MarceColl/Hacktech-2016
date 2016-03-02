@@ -1,12 +1,9 @@
 package music;
 
 
-import java.util.*;
-import java.lang.String;
-import java.lang.Iterable;
-
-
-import music.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by dorien on 10/11/14.
@@ -15,7 +12,7 @@ public class Fragment {
 
 
     private Integer length;
-    private Map<Integer, Note> eventsInFragment = new HashMap();
+    private Map<Integer, Note> eventsInFragment = new HashMap<Integer, Note>();
 
 
     private Type type;
@@ -65,8 +62,7 @@ public class Fragment {
         //fill songlist
 
 //        songList.clear();
-        this.songList = new ArrayList<Note>();
-        this.songList = (ArrayList<Note>) allNotes.clone();
+        this.songList = new ArrayList<Note>(allNotes);
     }
 
 
@@ -83,7 +79,7 @@ public class Fragment {
             //create event
 
             //set random properties base on type
-            //TODO
+
 
             if (type == Type.Note){
 
@@ -116,15 +112,14 @@ public class Fragment {
 
     public void print(){
         for (Map.Entry<Integer,Note> entry : eventsInFragment.entrySet()) {
-            Integer key = entry.getKey();
+           
             Note value = entry.getValue();
-            // do stuff
-           // if (type == Type.Note){
-                System.out.println(value.getId() + " " + ((Note) value).getDuration() + " ");// + (((Note)value).getPitch() + " ");
-            //}
+
+            System.out.println(value.getId() + " " + ((Note) value).getDuration() + " ");// + (((Note)value).getPitch() + " ");
+
 
         }
-//        System.out.println("score: " + getScore());
+
 
 
 
