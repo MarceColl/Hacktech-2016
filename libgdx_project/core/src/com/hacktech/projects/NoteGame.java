@@ -374,6 +374,7 @@ public class NoteGame extends ApplicationAdapter implements PitchHandler {
 							if(b.type == -5 && b.status == 1){
 								this.finish();
 								scrollX = 0;
+								break;
 							}
 						}
 					}
